@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System;
-
+using CalendarUnit = UnityEngine.iOS.CalendarUnit;
 using NotificationServices = UnityEngine.iOS.NotificationServices;
 using LocalNotification = UnityEngine.iOS.LocalNotification;
 
@@ -48,11 +48,13 @@ public class LocalNotificationManager
             pluginClass.CallStatic("SetNotification", id, delay * 1000L, title, message, message, sound ? 1 : 0, vibrate ? 1 : 0, lights ? 1 : 0, bigIcon, "notify_icon_small", bgColor.r * 65536 + bgColor.g * 256 + bgColor.b, (int)executeMode, mainActivityClassName);
         }
 #elif UNITY_IOS && !UNITY_EDITOR
+
         var notif = new LocalNotification();
         notif.alertAction = title;
         notif.fireDate = DateTime.Now.AddSeconds(delay);
         notif.alertBody = message;
         NotificationServices.ScheduleLocalNotification(notif);
+        NotificationTest.Text = "SendNotification";
 #endif
     }
 
@@ -69,8 +71,9 @@ public class LocalNotificationManager
         notif.alertAction = title;
         notif.fireDate = DateTime.Now.AddSeconds(delay);
         notif.alertBody = message;
-        //notif.repeatInterval = 
+        notif.repeatInterval = CalendarUnit.Minute;
         NotificationServices.ScheduleLocalNotification(notif);
+        NotificationTest.Text = "SendRepeatingNotification";
 #endif
     }
 
@@ -82,8 +85,9 @@ public class LocalNotificationManager
             pluginClass.CallStatic("CancelNotification", id);
         }
 #elif UNITY_IOS && !UNITY_EDITOR
-
-        NotificationServices.CancelLocalNotification(NotificationServices.GetLocalNotification(0));
+        NotificationServices.CancelAllLocalNotifications();
+        //NotificationServices.CancelLocalNotification(NotificationServices.GetLocalNotification(0));
+        NotificationTest.Text = "CancelNotification";
 #endif
 
     }
