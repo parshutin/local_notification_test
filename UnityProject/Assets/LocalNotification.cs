@@ -17,7 +17,7 @@ public class LocalNotificationManager
             if (_Instance == null)
             {
 #if UNITY_IOS
-                NotificationServices.RegisterForNotifications(NotificationType.Alert | NotificationType.Badge);
+                UnityEngine.iOS.NotificationServices.RegisterForNotifications(UnityEngine.iOS.NotificationType.Alert | UnityEngine.iOS.NotificationType.Badge | UnityEngine.iOS.NotificationType.Sound);
 #endif
                 _Instance = new LocalNotificationManager();
             }
@@ -57,14 +57,14 @@ public class LocalNotificationManager
     }
 #endif
 
-    #if UNITY_ANDROID
+#if UNITY_ANDROID
 
     public void CreateAndroidNotification(int id, string title, string message, TimeSpan delay)
     {
         AndroidJavaClass pluginClass = new AndroidJavaClass(AndroidClassName);
         if (pluginClass != null)
         {
-            pluginClass.CallStatic("SetNotification", id, delay.TotalSeconds*1000L, title, message, message, 1, 1, 1,
+            pluginClass.CallStatic("SetNotification", id, delay.TotalSeconds * 1000L, title, message, message, 1, 1, 1,
                 0, AndroidMainActivityClassName);
         }
     }
@@ -75,7 +75,7 @@ public class LocalNotificationManager
         AndroidJavaClass pluginClass = new AndroidJavaClass(AndroidClassName);
         if (pluginClass != null)
         {
-            pluginClass.CallStatic("SetRepeatingNotification", id, delay.TotalSeconds*1000L, title, message, message,
+            pluginClass.CallStatic("SetRepeatingNotification", id, delay.TotalSeconds * 1000L, title, message, message,
                 timeout.TotalSeconds * 1000L, 1, 1, 1, 0, AndroidMainActivityClassName);
         }
     }
