@@ -6,7 +6,7 @@ public class LocalNotificationManager
 {
     private const string AndroidClassName = "net.agasper.unitynotification.UnityNotificationManager";
 
-    private const string AndroidMainActivityClassName = "com.unity3d.player.UnityPlayerNativeActivity";
+    private static string AndroidMainActivityClassName = "com.unity3d.player.UnityPlayerNativeActivity";
 
     private static LocalNotificationManager _Instance;
 
@@ -17,7 +17,9 @@ public class LocalNotificationManager
             if (_Instance == null)
             {
 #if UNITY_IOS
-                UnityEngine.iOS.NotificationServices.RegisterForNotifications(UnityEngine.iOS.NotificationType.Alert | UnityEngine.iOS.NotificationType.Badge | UnityEngine.iOS.NotificationType.Sound);
+                UnityEngine.iOS.NotificationServices.RegisterForNotifications(UnityEngine.iOS.NotificationType.Alert |
+                                                                  UnityEngine.iOS.NotificationType.Badge |
+                                                                  UnityEngine.iOS.NotificationType.Sound);
 #endif
                 _Instance = new LocalNotificationManager();
             }
@@ -59,49 +61,6 @@ public class LocalNotificationManager
 
 #if UNITY_ANDROID
 
-    public void CreateAndroidNotification(int id, string title, string message, TimeSpan delay)
-    {
-        AndroidJavaClass pluginClass = new AndroidJavaClass(AndroidClassName);
-        if (pluginClass != null)
-        {
-            pluginClass.CallStatic("SetNotification", id, delay.TotalSeconds * 1000L, title, message, message, 1, 1, 1,
-                0, AndroidMainActivityClassName);
-        }
-    }
-
-    public void CreateAndroidRepeatingNotification(int id, string title, string message, TimeSpan delay,
-        TimeSpan timeout)
-    {
-        AndroidJavaClass pluginClass = new AndroidJavaClass(AndroidClassName);
-        if (pluginClass != null)
-        {
-            pluginClass.CallStatic("SetRepeatingNotification", id, delay.TotalSeconds * 1000L, title, message, message,
-                timeout.TotalSeconds * 1000L, 1, 1, 1, 0, AndroidMainActivityClassName);
-        }
-    }
-
-    public void CancelAndroidNotification(int id)
-    {
-        AndroidJavaClass pluginClass = new AndroidJavaClass(AndroidClassName);
-        if (pluginClass != null)
-        {
-            pluginClass.CallStatic("CancelNotification", id);
-        }
-    }
-
-
-
-    public void CancelAllAndroidNotifications()
-    {
-        AndroidJavaClass pluginClass = new AndroidJavaClass(AndroidClassName);
-        if (pluginClass != null)
-        {
-            pluginClass.CallStatic("CancelAll");
-        }
-    }
-#endif
-
-    /*
     public enum NotificationExecuteMode
     {
         Inexact = 0,
@@ -109,72 +68,51 @@ public class LocalNotificationManager
         ExactAndAllowWhileIdle = 2
     }
 
-
-    private static string fullClassName = "net.agasper.unitynotification.UnityNotificationManager";
-    private static string mainActivityClassName = "com.unity3d.player.UnityPlayerNativeActivity";
-
-
-    public static void SendNotification(int id, TimeSpan delay, string title, string message)
+    public void CreateAndroidNotification(int id, string title, string message, TimeSpan delay)
     {
         SendNotification(id, (int)delay.TotalSeconds, title, message, Color.white);
     }
-    
-    public static void SendNotification(int id, long delay, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "", NotificationExecuteMode executeMode = NotificationExecuteMode.Inexact)
+
+    private void SendNotification(int id, long delay, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "", NotificationExecuteMode executeMode = NotificationExecuteMode.Inexact)
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
+        AndroidJavaClass pluginClass = new AndroidJavaClass(AndroidClassName);
         if (pluginClass != null)
         {
-            pluginClass.CallStatic("SetNotification", id, delay * 1000L, title, message, message, sound ? 1 : 0, vibrate ? 1 : 0, lights ? 1 : 0, bigIcon, "notify_icon_small", bgColor.r * 65536 + bgColor.g * 256 + bgColor.b, (int)executeMode, mainActivityClassName);
+            pluginClass.CallStatic("SetNotification", id, delay*1000L, title, message, message, sound ? 1 : 0,
+                vibrate ? 1 : 0, lights ? 1 : 0, bigIcon, "notify_icon_small",
+                bgColor.r*65536 + bgColor.g*256 + bgColor.b, (int) executeMode, AndroidMainActivityClassName);
         }
-#elif UNITY_IOS && !UNITY_EDITOR
-
-       
-#endif
     }
 
-    public static void SendRepeatingNotification(int id, long delay, long timeout, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "")
+    public void CreateAndroidRepeatingNotification(int id, string title, string message, TimeSpan delay,TimeSpan timeout)
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
+        SenRepeatingNotification(id, title, message, (int) delay.TotalSeconds, (int) timeout.TotalSeconds, Color.white);
+    }
+
+    private void SenRepeatingNotification(int id, string title, string message, long delay, long timeout, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "")
+    {
+        AndroidJavaClass pluginClass = new AndroidJavaClass(AndroidClassName);
         if (pluginClass != null)
         {
-            pluginClass.CallStatic("SetRepeatingNotification", id, delay * 1000L, title, message, message, timeout * 1000, sound ? 1 : 0, vibrate ? 1 : 0, lights ? 1 : 0, bigIcon, "notify_icon_small", bgColor.r * 65536 + bgColor.g * 256 + bgColor.b, mainActivityClassName);
+            pluginClass.CallStatic("SetRepeatingNotification", id, delay*1000L, title, message, message, timeout*1000,
+                sound ? 1 : 0, vibrate ? 1 : 0, lights ? 1 : 0, bigIcon, "notify_icon_small",
+                bgColor.r*65536 + bgColor.g*256 + bgColor.b, AndroidMainActivityClassName);
         }
-#elif UNITY_IOS && !UNITY_EDITOR
-        var notif = new LocalNotification();
-        notif.alertAction = title;
-        notif.fireDate = DateTime.Now.AddSeconds(delay);
-        notif.alertBody = message;
-        notif.repeatInterval = CalendarUnit.Minute;
-        NotificationServices.ScheduleLocalNotification(notif);
-        NotificationTest.Text = "SendRepeatingNotification";
-#endif
     }
 
-    public static void CancelNotification(int id)
+    public void CancelAndroidNotification(int id)
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
+        AndroidJavaClass pluginClass = new AndroidJavaClass(AndroidClassName);
         if (pluginClass != null) {
             pluginClass.CallStatic("CancelNotification", id);
         }
-#elif UNITY_IOS && !UNITY_EDITOR
-        NotificationServices.CancelAllLocalNotifications();
-        //NotificationServices.CancelLocalNotification(NotificationServices.GetLocalNotification(0));
-        NotificationTest.Text = "CancelNotification";
-#endif
-
     }
 
-    public static void CancelAllNotifications()
+    public void CancelAllAndroidNotifications()
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
+        AndroidJavaClass pluginClass = new AndroidJavaClass(AndroidClassName);
         if (pluginClass != null)
             pluginClass.CallStatic("CancelAll");
-#elif UNITY_IOS && !UNITY_EDITOR
-        NotificationServices.CancelAllLocalNotifications();
+    }
 #endif
-    }*/
 }

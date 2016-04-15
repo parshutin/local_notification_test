@@ -35,8 +35,8 @@ public class NotificationTest : MonoBehaviour
 
         if (GUILayout.Button("30 SECONDS", GUILayout.Height(Screen.height * 0.2f)))
         {
-#if UNITY_ANDROID
-            LocalNotificationManager.Instance.CreateAndroidNotification(count, "Title", "Long message text", TimeSpan.FromSeconds(30));
+#if UNITY_ANDROID 
+            LocalNotificationManager.Instance.CreateAndroidNotification(0, "Title", "Long message text", TimeSpan.FromSeconds(30));
 #elif UNITY_IOS
                 LocalNotificationManager.Instance.CreateIOSNotification(count, "Title", "Long message text", TimeSpan.FromSeconds(30));
 #endif
@@ -46,7 +46,7 @@ public class NotificationTest : MonoBehaviour
 
         if (GUILayout.Button("EVERY 60 SECONDS", GUILayout.Height(Screen.height * 0.2f)))
         {
-#if UNITY_ANDROID
+#if UNITY_ANDROID 
             LocalNotificationManager.Instance.CreateAndroidRepeatingNotification(count, "Title", "Long message text", TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(60));
 #elif UNITY_IOS
                 LocalNotificationManager.Instance.CreateIOSNotification(count, "Title", "Long message text", TimeSpan.FromSeconds(5), UnityEngine.iOS.CalendarUnit.Minute);
@@ -58,7 +58,7 @@ public class NotificationTest : MonoBehaviour
 
         if (GUILayout.Button("STOP", GUILayout.Height(Screen.height * 0.2f)))
         {
-#if UNITY_ANDROID
+#if UNITY_ANDROID 
             LocalNotificationManager.Instance.CancelAndroidNotification(count);
 #elif UNITY_IOS
             LocalNotificationManager.Instance.CancelIOSNotification(count);
