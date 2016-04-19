@@ -74,7 +74,12 @@ public class LocalNotificationManager
     public void CancelFirst()
     {
 #if UNITY_IOS
-            CancelNotification(_Notifications.Keys[0]);
+        foreach(var key in _Notifications.Keys)
+        {
+            CancelNotification(key);
+            break;
+        }
+        
 #elif UNITY_ANDROID
         CancelNotification(_IdsList[0]);
 #endif
