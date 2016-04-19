@@ -49,7 +49,7 @@ public class LocalNotificationManager
     public void ShowInfo()
     {
 #if UNITY_IOS
-            NotificationTest.Text = UnityEngine.iOS.NotificationServices.localNotificationCount.ToString();
+            NotificationTest.Text = UnityEngine.iOS.NotificationServices.scheduledLocalNotifications.Length.ToString();
         string str = "";
         foreach (var id in _Notifications.Keys)
         {
@@ -69,6 +69,16 @@ public class LocalNotificationManager
 
         NotificationTest.Text1 = str;
 #endif
+    }
+
+    public void CancelFirst()
+    {
+#if UNITY_IOS
+            CancelNotification(_Notifications.Keys[0]);
+#elif UNITY_ANDROID
+        CancelNotification(_IdsList[0]);
+#endif
+
     }
 
     public void CancelAllNotifications()

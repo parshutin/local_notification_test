@@ -29,8 +29,10 @@ public class NotificationTest : MonoBehaviour
             sleepUntil = Time.time + 1;
         }
 
-        if (GUILayout.Button("EVERY 60 SECONDS", GUILayout.Height(Screen.height * 0.2f)))
+        if (GUILayout.Button("Cancel last", GUILayout.Height(Screen.height * 0.2f)))
         {
+            LocalNotificationManager.Instance.CancelFirst();
+            sleepUntil = Time.time + 1;
         }
 
         GUI.enabled = true;
