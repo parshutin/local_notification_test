@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.iOS;
 
 public class NotificationTest : MonoBehaviour
@@ -45,8 +46,14 @@ public class NotificationTest : MonoBehaviour
 
         if (GUILayout.Button("STOP ALL", GUILayout.Height(Screen.height * 0.2f)))
         {
-            LocalNotificationManager.Instance.CancelAllNotifications();
-            sleepUntil = Time.time + 1;
+            try
+            {
+                LocalNotificationManager.Instance.CancelAllNotifications();
+            }
+            catch
+            {
+                Text = "Error!";
+            }
         }
     }
 }

@@ -148,7 +148,7 @@ public class LocalNotificationManager
     public void CreateAndroidNotification(int id, string title, string message, TimeSpan delay)
     {
         _IdsList.Add(id);
-        SendNotification(id, (int)delay.TotalSeconds, title, message, Color.white);
+        SendNotification(id, (int)delay.TotalSeconds, title, message, Color.red);
     }
 
     private void SendNotification(int id, long delay, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "", NotificationExecuteMode executeMode = NotificationExecuteMode.Inexact)
@@ -157,7 +157,7 @@ public class LocalNotificationManager
         if (pluginClass != null)
         {
             pluginClass.CallStatic("SetNotification", id, delay * 1000L, title, message, message, sound ? 1 : 0,
-                vibrate ? 1 : 0, lights ? 1 : 0, bigIcon, "notify_icon_small",
+                vibrate ? 1 : 0, lights ? 1 : 0, "app_icon", "icon_notification",
                 bgColor.r * 65536 + bgColor.g * 256 + bgColor.b, (int)executeMode, AndroidMainActivityClassName);
         }
     }
@@ -191,7 +191,7 @@ public class LocalNotificationManager
     public void CancelAllAndroidNotifications()
     {
         _IdsList.Clear();
-        AndroidJavaClass pluginClass = new AndroidJavaClass(AndroidClassName);
+        AndroidJavaObject pluginClass = new AndroidJavaObject(AndroidClassName);
         if (pluginClass != null)
             pluginClass.CallStatic("CancelAll");
     }
